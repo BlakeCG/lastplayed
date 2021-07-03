@@ -1,5 +1,5 @@
-const Product = require('../models/product');
-const CurrentSong = require('../models/currentsong');
+const Product = require('../backend/models/product');
+const CurrentSong = require('../backend/models/currentsong');
 
 const Parser = require('icecast-parser');
 const timestamp = require('time-stamp');
