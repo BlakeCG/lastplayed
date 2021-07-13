@@ -1,11 +1,6 @@
-const fs = require('fs');
-const path = require('path');
+const db = require('../util/database')
 
-const p = path.join(
-    path.dirname(process.mainModule.filename),
-    'data',
-    'history.json'
-);
+const { deleteById } = require('./product');
 
 module.exports = class CurrentSong {
     constructor(nowPlaying, date, time) {
@@ -15,28 +10,14 @@ module.exports = class CurrentSong {
     }
 
     save() {
-        getSongsFromFile(songs => {
-
-            let lastSongInHistory = {};
-
-            lastSongInHistory = songs[songs.length - 1];
-
-            if (lastSongInHistory.nowPlaying !== this.nowPlaying) {
-                songs.push(this);
-                fs.writeFile(p, JSON.stringify(songs, null, 2), err => {
-                    console.log(err);
-                });
-            }
-        });
+        db.execute('INSERT INTO songhistory (songtitle, date, time) VALUES (?, ?, ?)',
+            [this.nowPlaying, this.date, this.time]
+        )
+            .then((result) => {
+                console.log(result);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     }
-};
-
-const getSongsFromFile = cb => {
-    fs.readFile(p, (err, fileContent) => {
-        if (err) {
-            cb([]);
-        } else {
-            cb(JSON.parse(fileContent));
-        }
-    });
 };
